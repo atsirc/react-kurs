@@ -34,28 +34,28 @@ const App = () => {
   ]
   const [votes, addVote] = useState({})
   const [selected, setSelected] = useState(0)
-	const [mostPopular, setMostPopular] = useState(null)
-	const getRandomAnecdote = (max) => {
+  const [mostPopular, setMostPopular] = useState(null)
+  const getRandomAnecdote = (max) => {
 		setSelected(Math.floor(Math.random() * max))
-	}
+  }
 
-	const vote = (index) => {
+  const vote = (index) => {
 		const copy = {...votes}
 		copy[index] = (copy[index] || 0) + 1
 		addVote(copy)
 		index = Object.keys(copy).reduce((a, b) => copy[a] > copy[b] ? a : b)
-    setMostPopular(index)
-	}
+    		setMostPopular(index)
+  }
 
   return (
     <div>
     	<Header text="Anecdote of the day"/>
-      <p>{anecdotes[selected]}</p>
+      	<p>{anecdotes[selected]}</p>
     	<Button clickHandler={()=> getRandomAnecdote(anecdotes.length)} text="get next"/>
-  	  <Button clickHandler={()=> vote(selected)} text="vote"/>
+  	<Button clickHandler={()=> vote(selected)} text="vote"/>
 			<Header text="Most popular anecdote"/>
 			<Popular anecdote={anecdotes[mostPopular]} votes={votes[mostPopular]}/>
-	 </div>
+    </div>
   )
 }
 
