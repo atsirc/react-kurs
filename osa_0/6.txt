@@ -1,0 +1,8 @@
+
+selain->palvelin: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa
+
+note over selain:
+kavaakkeen eventhandler tekee hommansa ja lähettää vastauksen selaimeen
+samaan aikaan kun JS:n avulla lisätään DOM:in uusi li joka sisältää uuden vastauksen.
+Myös selaimen notes muuntajaan lisätään uusi muistiinpano. Eli tämän avulla sivua ei tarvite reloadata
+end note
