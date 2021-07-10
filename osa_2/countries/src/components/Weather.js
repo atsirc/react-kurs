@@ -10,7 +10,7 @@ const Weather = ({ city }) => {
 			.get(url)
 			.then(response=>{
 				setWeather(response.data)
-			})
+			}).catch(console.log)
 	}
     useEffect(getWeather,[])
 
@@ -27,7 +27,7 @@ const Weather = ({ city }) => {
     return (
         <div>
             <h2>Current weather in {city}</h2>
-            {weather.hasOwnProperty("main") ? formatWeather() : ""}
+            {weather.hasOwnProperty("main") ? formatWeather() : "no weather infromation found"}
         </div>
     )
 }
