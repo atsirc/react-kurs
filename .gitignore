@@ -4,3 +4,7 @@ leftright/
 notes/
 part1/
 node_modules/
+public/
+README.md
+package-lock.json
+.env
