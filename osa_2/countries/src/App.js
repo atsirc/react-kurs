@@ -9,14 +9,14 @@ const App = () => {
   const [ countries, setCountries ] = useState([])
 
   const hook =() => {
-		axios
-			.get('https://restcountries.eu/rest/v2/all')
-			.then(response=>{
-				setCountries(response.data)
-			})
-	}
-
-	useEffect(hook, [])
+    axios
+      .get('https://restcountries.eu/rest/v2/all')
+      .then(response=>{
+        setCountries(response.data)
+      })
+  }
+  
+  useEffect(hook, [])
 
   const handleChange = (event) => {
     const value = event.target.value
