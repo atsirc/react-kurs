@@ -23,8 +23,7 @@ const App = () => {
 
   const handleAddNumber = (personObj) => {
     const existingPerson = persons.find(person => person.name === newName)
-    console.log("persons", persons)
-    console.log("new",personObj)
+
     if (typeof(existingPerson) !== 'undefined') {
       if (window.confirm(`${newName} is already added to the phonebook, do you want to replace the old number with a new one?`)) {
         return services.update(existingPerson.id, personObj).then( changedNumber => {
@@ -53,6 +52,13 @@ const App = () => {
           type: "success"}
         )
         setTimeout(() => { setMessage(null)}, 5000)
+      }).catch(error => {
+          let errors = error.response.data.error
+          errors = Object.values(errors).map(field => field.message)
+          setMessage({
+              text: errors.join(' '),
+              type: "error" 
+          })
       })
     }
   }
