@@ -1,0 +1,3 @@
+[submodule "osa_3/phonebook_backend2"]
+	path = osa_3/phonebook_backend2
+	url = https://git.heroku.com/shielded-plains-40783.git
