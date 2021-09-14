@@ -59,6 +59,7 @@ const App = () => {
               text: errors.join(' '),
               type: "error" 
           })
+          setTimeout(()=> {setMessage(null)}, 5000)
       })
     }
   }
