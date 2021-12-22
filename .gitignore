@@ -10,3 +10,6 @@ public/
 README.md
 package-lock.json
 .env
+.eslintignore
+.eslintrc.js
+.jsbeautifyrc
