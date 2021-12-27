@@ -4,7 +4,8 @@
   "description": "part 4 of fullstack open course",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
@@ -14,5 +15,8 @@
     "express": "^4.17.2",
     "http": "0.0.1-security",
     "mongoose": "^6.1.3"
+  },
+  "devDependencies": {
+    "jest": "^27.4.5"
   }
 }
