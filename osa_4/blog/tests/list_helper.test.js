@@ -4,19 +4,26 @@ const helper = require('./test_hepler')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const listHelper = require('../utils/list_helper')
 
 beforeEach(async () => {
-  await Blog.deleteMany({})
+  await User.deleteMany({})
+  await User.insertMany(helper.users)
+  const users = await helper.usersInDb()
 
+  await Blog.deleteMany({})
+  let i = 0
   for (const blog of helper.blogPosts) {
+    blog.userId = users[i%users.length].id
     const blogObject = new Blog(blog)
     await blogObject.save()
+    i++
   }
 })
 
 describe('total likes', () => {
-  const lisWithOneBlog = [{
+  const listWithOneBlog = [{
       id: '5a422aa71b54a676234d17f8',
       title: 'Go To Statement Considered Harmful',
       author: 'Edsger W. Dijkstra',
@@ -26,7 +33,7 @@ describe('total likes', () => {
   ]
 
   test('when list has only one blog, equals the likes of that', () => {
-    const result = listHelper.totalLikes(lisWithOneBlog)
+    const result = listHelper.totalLikes(listWithOneBlog)
     expect(result).toBe(5)
   })
 })
@@ -50,11 +57,13 @@ describe('has property named id', () => {
 
 describe('add blog', () => {
   test('when adding a blog, there should be 7 posts', async () => {
+    const user = await helper.usersInDb()
     const blogPost =  {
       title: "Test post",
       author: "No one",
       url: "test.url.com",
       likes: 3,
+      userId: user[0].id
     }
     await api
       .post('/api/blogs')
@@ -68,8 +77,6 @@ describe('add blog', () => {
     expect(titles).toContain('Test post')
   })
 })
-
-
 
 describe('finding max', () => {
 
@@ -103,10 +110,12 @@ describe('finding max', () => {
 describe('empty properties', () => {
 
   test('when creating a bloglist object without like property likes is set to 0', async () => {
+    const user = await helper.usersInDb()
     const blogPost =   {
       title: "should we consider a for-loop",
       author: "me",
       url: "helsinki.fi/hlskjdoos",
+      userId: user[1].id
     }
     let addedBlog = await api
       .post('/api/blogs')
@@ -144,7 +153,6 @@ describe('change content', () => {
     let post = await api.get('/api/blogs/5a422a851b54a676234d17f7')
     post = JSON.parse(JSON.stringify(post.body))
     post.likes += 3
-    console.log(post)
     const result = await api
       .put('/api/blogs/5a422a851b54a676234d17f7' )
       .send(post)

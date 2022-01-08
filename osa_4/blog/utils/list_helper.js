@@ -5,6 +5,7 @@ const dummy = (blogs) => {
 
 const totalLikes = (blogs) => {
   const total = blogs.map(n => n.likes).reduce((a,b)=>a+b, 0)
+  console.log(total)
   return total
 }
 
