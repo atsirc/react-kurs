@@ -2,8 +2,9 @@ POST http://localhost:3041/api/blogs/ HTTP/1.1
 content-type: application/json
 
 {
-    "title": "Second blogpost",
+    "title": "finding validation error... take xithree",
     "author": "christa",
     "url": "locllhost.fi/blog",
-    "likes": 3
+    "likes": 3,
+    "userId": "61da03b4fd17e66a9ddc740e"
 }
