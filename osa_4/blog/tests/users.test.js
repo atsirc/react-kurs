@@ -29,7 +29,6 @@ describe('add user', () => {
       .expect(201)
       .expect('Content-Type', /application\/json/)
     
-    //note to self: although helper funciton doesnt check fysical mongoose database, it has added the user
     const usersAfter = await helper.usersInDb()
     expect(usersAfter).toHaveLength(3)
   })
@@ -58,7 +57,7 @@ describe('add user', () => {
     } catch (err) {
       expect(err.message).toMatch(new RegExp('duplicate key error'))
     }
-    // note to self: although not sent to database also helper function hasnt added user
+
     const usersAfter = await helper.usersInDb()
     expect(usersAfter).toHaveLength(2)
   })
@@ -73,7 +72,7 @@ describe('add user', () => {
     await api.post('/api/users')
              .send(user)
              .expect(401)
-    // note to self: although not testing real databse helper function hasnt added user
+
     const usersAfter = await helper.usersInDb()
     expect(usersAfter).toHaveLength(2)
   })

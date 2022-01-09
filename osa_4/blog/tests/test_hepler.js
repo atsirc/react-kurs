@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
@@ -61,7 +62,7 @@ const users = [
   {
     name: 'Testing Testing',
     username: 'tt2',
-    passwod: 'TestPassword'
+    password: 'TestPassword'
   }
 ]
 
@@ -83,6 +84,17 @@ const usersInDb = async () => {
   return users.map(user=>user.toJSON())
 }
 
+const getValidTokenAndUserId = async () => {
+    const newUser = {username: 'ASDJAF', name: 'A Name', password: 'justtesting'}
+    const passwordHash = await bcrypt.hash(newUser.password, 10)
+    const user = new User({...newUser, passwordHash})
+    await user.save()
+    const login = await api.post('/api/login')
+      .send(newUser) // newUser för att den har password
+      .expect(200)
+    return login.body.token, user.id
+}
+
 module.exports = {
-  blogPosts, nonExistingId, blogsInDb, users, usersInDb
+  blogPosts, nonExistingId, blogsInDb, users, usersInDb, getValidTokenAndUserId
 }

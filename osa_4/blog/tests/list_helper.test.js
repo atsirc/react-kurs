@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
+const bcrypt = require('bcrypt')
 const helper = require('./test_hepler')
 const app = require('../app')
 const api = supertest(app)
@@ -57,16 +58,26 @@ describe('has property named id', () => {
 
 describe('add blog', () => {
   test('when adding a blog, there should be 7 posts', async () => {
-    const user = await helper.usersInDb()
+    // helper.usersInDb() ger inga passwords eftersom den är beroende av json
+    // därför skapar mean en ny som man sparar 
+    const newUser = {username: 'ASDJAF', name: 'A Name', password: 'justtesting'}
+    const passwordHash = await bcrypt.hash(newUser.password, 10)
+    const user = new User({...newUser, passwordHash})
+    await user.save()
+    const login = await api.post('/api/login')
+      .send(newUser) // newUser för att den har password
+      .expect(200)
     const blogPost =  {
       title: "Test post",
       author: "No one",
       url: "test.url.com",
       likes: 3,
-      userId: user[0].id
+      userId: user.id // för att user igen har id, men inte password
     }
+
     await api
       .post('/api/blogs')
+      .set('Authorization', 'bearer ' + login.body.token)
       .send(blogPost)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -110,15 +121,25 @@ describe('finding max', () => {
 describe('empty properties', () => {
 
   test('when creating a bloglist object without like property likes is set to 0', async () => {
-    const user = await helper.usersInDb()
+    // helper.usersInDb() ger inga passwords eftersom den är beroende av json
+    // därför skapar mean en ny som man sparar 
+    const newUser = {username: 'ASDJAF', name: 'A Name', password: 'justtesting'}
+    const passwordHash = await bcrypt.hash(newUser.password, 10)
+    const user = new User({...newUser, passwordHash})
+    await user.save()
+    const login = await api.post('/api/login')
+      .send(newUser) // newUser för att den har password
+      .expect(200)
+
     const blogPost =   {
       title: "should we consider a for-loop",
       author: "me",
       url: "helsinki.fi/hlskjdoos",
-      userId: user[1].id
+      userId: user.id // user has an id property
     }
     let addedBlog = await api
       .post('/api/blogs')
+      .set('Authorization', 'bearer ' + login.body.token)
       .send(blogPost)
       .expect(201)
       .expect('Content-type', /application\/json/)
@@ -127,24 +148,63 @@ describe('empty properties', () => {
   })
 
   test('empty title and url results in 400 Bad Request', async () => {
+    // helper.usersInDb() ger inga passwords eftersom den är beroende av json
+    // därför skapar mean en ny som man sparar 
+    const newUser = {username: 'ASDJAF', name: 'A Name', password: 'justtesting'}
+    const passwordHash = await bcrypt.hash(newUser.password, 10)
+    const user = new User({...newUser, passwordHash})
+    await user.save()
+    const login = await api.post('/api/login')
+      .send(newUser) // newUser för att den har password
+      .expect(200)
+
     const blogPost =   {
       title: "",
       author: "christa",
       url: "",
-      likes: 10
+      likes: 10,
+      userId: user.id
     }
     await api
       .post('/api/blogs')
+      .set('Authorization', 'bearer ' + login.body.token)
       .send(blogPost)
       .expect(400)
   })
 })
 
 describe('deleting post', () => {
-  test('deleting post with id 5a422a851b54a676234d17f7 returns 204', async () => {
+  test(`deleting newly created post returns 204`, async () => {
+    const newUser = {username: 'ASDJAF', name: 'A Name', password: 'justtesting'}
+    const passwordHash = await bcrypt.hash(newUser.password, 10)
+    const user = new User({...newUser, passwordHash})
+    await user.save()
+    const login = await api.post('/api/login')
+      .send(newUser) // newUser för att den har password
+      .expect(200)
+
+    const blogPost = {
+      title: "to be removed",
+      author: "christa",
+      url: "skldjfl@html.com",
+      likes: 10,
+      userId: user.id
+    }
+    const post = await api
+      .post('/api/blogs')
+      .set('Authorization', 'bearer ' + login.body.token)
+      .send(blogPost)
+
     await api
-      .delete('/api/blogs/5a422a851b54a676234d17f7' )
+      .delete(`/api/blogs/${post.body.id}`)
+      .set('Authorization', 'bearer ' + login.body.token)
       .expect(204)
+  })
+
+  test(`deleting without token returns 401`, async () => {
+    await api
+      .delete(`/api/blogs/19028918`)
+      .expect(401)
   })
 })
 
